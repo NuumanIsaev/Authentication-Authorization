@@ -1,0 +1,60 @@
+﻿<div style="width:100%;">
+    <RadzenRow AlignItems="AlignItems.Start" Wrap="FlexWrap.Wrap" Gap="1rem" Class="rz-mb-1">
+        <RadzenColumn Size="12" SizeMD="6" SizeLG="6" Gap="1rem">
+            <RadzenFormField Variant="Variant.Filled" Style="width: 100%;">
+                <RadzenDropDown @bind-Value=@ParentIdent Data=@allCatlist TextProperty="Category_Name" ValueProperty="Ident" AllowClear=true/>
+            </RadzenFormField>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6" SizeLG="6" Gap="1rem">
+            <RadzenFormField Text="Название категории" Variant="Variant.Filled" Style="width: 100%;">
+                <RadzenTextBox @bind-Value="NewCategory.Category_Name" Style="width: 100%;" />
+            </RadzenFormField>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6" SizeLG="6" Gap="1rem">
+            <RadzenFormField Text="Порядок категорий" Variant="Variant.Filled" Style="width: 100%;">
+                <RadzenTextBox @bind-Value="stringValueOfCategoryOrder" Style="width: 100%;" />
+            </RadzenFormField>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6" SizeLG="6" Gap="1rem">
+            <RadzenFormField Text="Иконка категории" Variant="Variant.Filled" Style="width: 100%;">
+                <RadzenTextBox @bind-Value="NewCategory.Category_Icon" Style="width: 100%;" />
+            </RadzenFormField>
+        </RadzenColumn>
+    </RadzenRow>
+</div>
+<br />
+<RadzenStack Orientation="Radzen.Orientation.Horizontal" AlignItems="Radzen.AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap" JustifyContent="JustifyContent.Right" Style=" width:100%; height:30%; ">
+    <RadzenButton Text="Добавить" Click="OnSave" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.ExtraSmall" />
+    <RadzenButton Text="Отменить" Click="Cancel" ButtonStyle="ButtonStyle.Light" Size="ButtonSize.ExtraSmall" />
+</RadzenStack>
+
+
+@code {
+    [Parameter]
+    public List<EBMegaCategories> allCatlist { get; set; }
+    private EBMegaCategories NewCategory { get; set; } = new EBMegaCategories();
+    private int CategoryOrder;
+    private string stringValueOfCategoryOrder {     get { return NewCategory.Category_Order.ToString(); } 
+                                                    set { CategoryOrder = int.Parse(value); } }
+    int? ParentIdent;
+    DateTime createdDate = DateTime.Now;
+    int status = 1;
+    void OnSave()
+    {
+        if (ParentIdent == null)
+        {
+            NewCategory.Parent_Ident = 0;
+        }
+        else
+        {
+            NewCategory.Parent_Ident = ParentIdent.Value;
+        }
+        NewCategory.Category_Order = CategoryOrder;
+        category.CreateCategory(NewCategory, createdDate, status);
+        DialogService.Close();
+    }
+    void Cancel()
+    {
+        DialogService.Close();
+    }
+}

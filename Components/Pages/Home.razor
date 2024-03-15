@@ -1,0 +1,239 @@
+﻿@page "/"
+
+<RadzenStack Orientation="Orientation.Horizontal" Gap="1%" Style="height:55rem;padding:1%; background-color: ghostwhite">
+     <RadzenStack Orientation="Orientation.Vertical" Style="width:30%" >
+        <RadzenButton Variant="Variant.Outlined" Shade="Shade.Lighter" Click="AddNewCategory" Text="Добавить новую категорию" ButtonStyle="ButtonStyle.Primary" />
+        <RadzenPanelMenu Style="width:100%">
+            <ChildContent>
+                @foreach (var item in categorylist)
+                {
+                    var subCategories = allCatlist.Where(p => p.Parent_Ident.Equals(item.Ident)).ToList();
+                    if (subCategories.Any())
+                    {
+                        <RadzenStack Orientation="Orientation.Horizontal" Style="width:100%">
+                            <RadzenPanelMenuItem Text="@item.Category_Name" Click="() => SelectCat(item)" Style="width:80%">
+                                @foreach (var itemSub in subCategories)
+                                {
+                                    <RadzenStack Orientation="Orientation.Horizontal">
+                                        <RadzenPanelMenuItem Text="@itemSub.Category_Name" Click="() => SelectCategory(itemSub)" Style="width:80%" />
+                                        <div style="align-self:end">
+                                            <RadzenButton Click=@(args => UpdateCategory(itemSub)) Icon="edit" ButtonStyle="ButtonStyle.Light" Size="ButtonSize.ExtraSmall" />
+                                            <RadzenButton Click=@(args => DeleteCategory(itemSub)) Icon="delete" ButtonStyle="ButtonStyle.Light" Size="ButtonSize.ExtraSmall" />
+                                        </div>
+                                    </RadzenStack>
+                                }
+                            </RadzenPanelMenuItem>
+                            <RadzenButton Click=@(args => UpdateCategory(item)) Icon="edit" ButtonStyle="ButtonStyle.Light" Size="ButtonSize.ExtraSmall" Style="height:30px"/>
+                            <RadzenButton Click=@(args => DeleteCategory(item)) Icon="delete" ButtonStyle="ButtonStyle.Light" Size="ButtonSize.ExtraSmall" Style="height:30px" />
+                        </RadzenStack>
+                    }
+                    else
+                    {
+                        <RadzenStack Orientation="Orientation.Horizontal" Style="width:100%">
+                            <RadzenPanelMenuItem Text="@item.Category_Name" Click="() => SelectCategory(item)" Style="width:80%"/>
+                            <div style="width:20%; align-self:center" >
+                                <RadzenButton Click=@(args => UpdateCategory(item)) Icon="edit" ButtonStyle="ButtonStyle.Light" Size="ButtonSize.ExtraSmall" />
+                                <RadzenButton Click=@(args => DeleteCategory(item)) Icon="delete" ButtonStyle="ButtonStyle.Light" Size="ButtonSize.ExtraSmall" />
+                            </div>
+                        </RadzenStack>
+                    }
+                }
+            </ChildContent>
+        </RadzenPanelMenu>
+    </RadzenStack>
+
+    <RadzenStack Orientation="Orientation.Vertical" Gap="1%" Style="width:70%">
+
+        <input type="text" @bind="searchTerm" @oninput="HandleSearchInput" placeholder=" Поиск ..." />
+
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="1%">
+
+            <RadzenStack Orientation="Orientation.Vertical" Style="width:50%; height:100%; background-color:white" Gap="0%">
+                <RadzenText Style="height:2rem;padding:2%" TextStyle="TextStyle.DisplayH6">@name</RadzenText>
+                <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="true" AllowSorting="true" GridLines="Radzen.DataGridGridLines.Both" EmptyText="@value" Data="@ServiceWithIdSearch"
+                                    TItem="EBMegaServices" SelectionMode="DataGridSelectionMode.Single" @bind-Value="selectedService" RowDoubleClick="@(args => HandleRowDoubleClickNull(args.Data))"
+                                    Style="cursor:pointer;" CellContextMenu="OnCellContextMenuService" Density="Density.Compact">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="EBMegaServices" Title="№" Width="15%" TextAlign="TextAlign.Center">
+                                    <Template Context="data">
+                                        @((ServiceWithIdSearch.IndexOf(data) + 1))
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="EBMegaServices" Property="Service_Name" Title="Название сервиса" Width="80%" />
+                        </Columns>
+                </RadzenDataGrid>
+            </RadzenStack>
+
+            <RadzenStack Orientation="Orientation.Vertical" Style="width:50%; height:800px; background-color:white" Gap="0%">
+                <RadzenText Style="height:2rem; padding:2%" TextStyle="TextStyle.DisplayH6">Другие</RadzenText>
+                <RadzenDataGrid AllowColumnResize="true" AllowAlternatingRows="true" AllowSorting="true" GridLines="Radzen.DataGridGridLines.Both" EmptyText="@value" Data="@EmptyServiceSearch"
+                                TItem="EBMegaServices" SelectionMode="DataGridSelectionMode.Single" @bind-Value="selectedService" RowDoubleClick="@(args => HandleRowDoubleClick(args.Data))"
+                                Style="cursor:pointer;" CellContextMenu="OnCellContextMenuService" Density="Density.Compact">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="EBMegaServices" Title="№" Width="15%" TextAlign="TextAlign.Center">
+                            <Template Context="data">
+                                @((EmptyServiceSearch.IndexOf(data) + 1))
+                            </Template>
+                        </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="EBMegaServices" Property="Service_Name" Title="Название сервиса" Width="70%" />
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenStack>
+
+        </RadzenStack>
+
+    </RadzenStack>
+
+</RadzenStack>
+   
+@code {
+    string value = "Пусто";
+    List<EBMegaServices> ServiceWithId; 
+    List<EBMegaServices> EmptyService;
+    IList<EBMegaServices> selectedService;
+    EBMegaCategories selectedCategory;
+    private string? searchTerm = "";
+    List<EBMegaServices> EmptyServiceSearch => string.IsNullOrEmpty(searchTerm) ? EmptyService : EmptyService.Where(h => h.Service_Name.StartsWith(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                                                                                                                         h.Service_Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+
+    List<EBMegaServices> ServiceWithIdSearch => string.IsNullOrEmpty(searchTerm) ? ServiceWithId : ServiceWithId.Where(h => h.Service_Name.StartsWith(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                                                                                                                           h.Service_Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+    List<EBMegaCategories> categorylist = new List<EBMegaCategories>();
+    List<EBMegaServices> serviceslist = new List<EBMegaServices>();
+    List<EBMegaCategories> allCatlist = new List<EBMegaCategories>();
+    int categoryIdent;
+    string name;
+    EBMegaCategories cat;
+    protected override async Task OnInitializedAsync()
+    {
+        allCatlist = category.GetAllCategories();
+        categorylist = allCatlist.Where(p => p.Parent_Ident.Equals(0)).ToList();
+        serviceslist = services.GetAllServices().ToList();
+    }
+
+    void SelectCategory(EBMegaCategories category)
+    {
+        cat = category;
+        name = category.Category_Name;
+        categoryIdent = category.Ident;
+        ServiceWithId = serviceslist.Where(p => p.Category_Ident == category.Ident).ToList();
+        EmptyService = serviceslist.Where(p => p.Category_Ident == 0).ToList();
+        StateHasChanged();
+    }
+
+    void SelectCat(EBMegaCategories category)
+    {
+        name = null;
+        ServiceWithId = new List<EBMegaServices>();
+        EmptyService = new List<EBMegaServices>();
+        value = "";
+    }
+
+    int CategoryIdent = 0;
+    void HandleRowDoubleClickNull(dynamic rowData)
+    {
+        var selItem = ServiceWithId.Where(p => p.Ident.Equals(selectedService[0].Ident)).FirstOrDefault();
+        services.UpdateServiceCategoryIdent(CategoryIdent, selItem.Ident);
+        serviceslist = services.GetAllServices().ToList();
+        SelectCategory(cat);
+        value = "Пусто";
+        StateHasChanged();
+    }
+
+    void HandleRowDoubleClick(dynamic rowData)
+    {
+        services.UpdateServiceCategoryIdent(categoryIdent, selectedService[0].Ident);
+        serviceslist = services.GetAllServices().ToList();
+        SelectCategory(cat);
+        StateHasChanged();
+    }
+    
+
+    void OnCellContextMenuService(DataGridCellMouseEventArgs<EBMegaServices> args)
+    {
+        selectedService = new List<EBMegaServices>() { args.Data };
+        var contextMenuItems = new List<ContextMenuItem>
+        {
+            new ContextMenuItem(){ Text = "Изменить", Value = 1, Icon = "edit"},
+            new ContextMenuItem(){ Text = "Удалить", Value = 2, Icon = "delete"},
+        };
+        ContextMenuService.Open(args, contextMenuItems, async (args) => await OnMenuItemClick(args));
+    }
+
+    async Task OnMenuItemClick(MenuItemEventArgs args)
+    {
+        switch (args.Value)
+        {
+            case 1:
+                await UpdateSelectedService();
+                serviceslist = services.GetAllServices().ToList();
+                SelectCategory(cat);
+                break;
+            case 2:
+                await DialogService.OpenAsync("Удалить?", ds =>
+                    @<RadzenStack Orientation="Orientation.Vertical" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+
+                        <div class="rz-text-wrap" style="width: 80%; text-align:center">Вы уверены, что хотите удалить этот сервис?</div>
+                        <RadzenStack Orientation="Orientation.Horizontal" Style="align-self:end">
+                            <RadzenButton Text="Удалить" Click="() => DeleteSelectedService()" Size="ButtonSize.ExtraSmall" />
+                            <RadzenButton Text="Отменить" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Light" Size="ButtonSize.ExtraSmall" />
+                        </RadzenStack>
+
+                    </RadzenStack>
+                    );
+
+                serviceslist = services.GetAllServices().ToList();
+                SelectCategory(cat);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private async Task UpdateSelectedService()
+    {
+        foreach (var element in selectedService)
+        {
+            var parameters = new Dictionary<string, object>{ { "selectedService", element } };
+            var result = await DialogService.OpenAsync<DialogUpdateServicePage>("Изменить сервис", parameters);
+        }
+    }
+
+    private async Task DeleteSelectedService()
+
+    {
+        services.DeleteService(selectedService[0].Ident);
+        DialogService.Close();
+    }
+    
+    private async Task UpdateCategory(EBMegaCategories cat)
+    {
+        var parameters = new Dictionary<string, object> { { "selectedCategory", cat } };
+        var result = await DialogService.OpenAsync<DialogUpdateCategoryPage>("Изменить категорию", parameters);
+        OnInitializedAsync();
+        StateHasChanged();
+    }
+
+    async Task AddNewCategory()
+    {
+        var parameters = new Dictionary<string, object> { { "allCatlist", allCatlist } };
+        var result = await DialogService.OpenAsync<DialogAddNewCategoryPage>("Добавить новую категорию", parameters);
+        OnInitializedAsync();
+        StateHasChanged();
+    }
+
+    private async Task DeleteCategory(EBMegaCategories cat)
+    {
+        selectedCategory = cat;
+        category.DeleteCategory(selectedCategory.Ident);
+        OnInitializedAsync();
+        StateHasChanged();
+    }
+
+    private void HandleSearchInput(ChangeEventArgs e)
+    {
+        searchTerm = e.Value.ToString();
+        StateHasChanged();
+    }
+}

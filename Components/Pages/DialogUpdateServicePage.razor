@@ -1,0 +1,46 @@
+﻿
+<div style="width:100%;">
+    <RadzenRow AlignItems="AlignItems.Start" Wrap="FlexWrap.Wrap" Gap="1rem">
+        <RadzenColumn Size="12" SizeMD="6" SizeLG="6">
+            <RadzenFormField Text="Название " Variant="Variant.Filled" Style="width: 100%;">
+                <RadzenTextBox @bind-Value="selectedService.Service_Name" Style="width: 100%;" />
+            </RadzenFormField>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6" SizeLG="6">
+            <RadzenFormField Text="Иконка" Variant="Variant.Filled" Style="width: 100%;">
+                <RadzenTextBox @bind-Value="selectedService.Service_Icon" Style="width: 100%;" />
+            </RadzenFormField>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6" SizeLG="6">
+            <RadzenFormField Text="Порядок" Variant="Variant.Filled" Style="width: 100%;">
+                <RadzenTextBox @bind-Value="@stringValueOfServiceOrder" Style="width: 100%;" />
+            </RadzenFormField>
+        </RadzenColumn>
+    </RadzenRow>
+</div>
+<br />
+<RadzenStack Orientation="Radzen.Orientation.Horizontal" AlignItems="Radzen.AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap" JustifyContent="JustifyContent.Right" Style=" width:100%; height:30%; ">
+    <RadzenButton Text="Сохранить" Click="OnSave" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Small" />
+    <RadzenButton Text="Отменить" Click="Cancel" ButtonStyle="ButtonStyle.Light" Size="ButtonSize.Small" />
+</RadzenStack>
+
+
+
+@code {
+    [Parameter]
+    public EBMegaServices selectedService { get; set; }
+    private int Service_Order;
+    private string stringValueOfServiceOrder { get { return selectedService.Service_Order.ToString(); } set { Service_Order = int.Parse(value); } }
+
+    void OnSave()
+    {
+        services.UpdateService(selectedService.Service_Name, selectedService.Service_Icon, Service_Order, selectedService.Ident);
+        StateHasChanged();
+        DialogService.Close();
+    }
+
+    void Cancel()
+    {
+        DialogService.Close();
+    }
+}
