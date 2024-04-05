@@ -35,7 +35,9 @@
     private EBMegaCategories NewCategory { get; set; } = new EBMegaCategories();
     private int CategoryOrder;
     private string stringValueOfCategoryOrder {     get { return NewCategory.Category_Order.ToString(); } 
-                                                    set { CategoryOrder = int.Parse(value); } }
+        set { CategoryOrder = int.Parse(value);
+            NewCategory.Category_Order = int.Parse(value);
+        } }
     int? ParentIdent;
     DateTime createdDate = DateTime.Now;
     int status = 1;

@@ -1,23 +1,23 @@
 {
   "Files": [
     {
-      "Id": "C:\\Users\\user\\source\\repos\\MegaPay\\MegaPay\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\MegaPay.bundle.scp.css",
+      "Id": "C:\\Users\\nisaev\\source\\repos\\MegaPay\\MegaPay\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\MegaPay.bundle.scp.css",
       "PackagePath": "staticwebassets\\MegaPay.bundle.scp.css"
     },
     {
-      "Id": "C:\\Users\\user\\source\\repos\\MegaPay\\MegaPay\\wwwroot\\app.css",
+      "Id": "C:\\Users\\nisaev\\source\\repos\\MegaPay\\MegaPay\\wwwroot\\app.css",
       "PackagePath": "staticwebassets\\app.css"
     },
     {
-      "Id": "C:\\Users\\user\\source\\repos\\MegaPay\\MegaPay\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "Id": "C:\\Users\\nisaev\\source\\repos\\MegaPay\\MegaPay\\wwwroot\\bootstrap\\bootstrap.min.css",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
     },
     {
-      "Id": "C:\\Users\\user\\source\\repos\\MegaPay\\MegaPay\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "Id": "C:\\Users\\nisaev\\source\\repos\\MegaPay\\MegaPay\\wwwroot\\bootstrap\\bootstrap.min.css.map",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
     },
     {
-      "Id": "C:\\Users\\user\\source\\repos\\MegaPay\\MegaPay\\wwwroot\\favicon.png",
+      "Id": "C:\\Users\\nisaev\\source\\repos\\MegaPay\\MegaPay\\wwwroot\\favicon.png",
       "PackagePath": "staticwebassets\\favicon.png"
     },
     {

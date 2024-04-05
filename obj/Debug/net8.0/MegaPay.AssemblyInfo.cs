@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MegaPay")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c60c44242b401d260ddcf68c80c226c576c9d44e")]
 [assembly: System.Reflection.AssemblyProductAttribute("MegaPay")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MegaPay")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

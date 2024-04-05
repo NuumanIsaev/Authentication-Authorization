@@ -5,14 +5,23 @@ using System.Data;
 using System.Data.SqlClient;
 using MegaPay.Components;
 using MegaPay.Services;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using MegaPay.Authentication;
+using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 // Add services to the container.
+builder.Services.AddAuthenticationCore();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddRadzenComponents();
+builder.Services.AddScoped<ProtectedSessionStorage>();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+builder.Services.AddSingleton<UserAccountService>();
 builder.Services.AddTransient<IDbConnection>((sp) => new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
 
 builder.Services.AddTransient<IMegaCategoryService, MegaCategoryService>();
 builder.Services.AddTransient<IMegaServices, MegaServices>();

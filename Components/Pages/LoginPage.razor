@@ -1,0 +1,81 @@
+﻿@page "/login"
+@using MegaPay.Authentication
+
+
+<EditForm Model="@model" OnValidSubmit="Authenticate">
+    <DataAnnotationsValidator />
+    <div style="display: flex; justify-content: center;">
+        <div style="width: 400px; padding: 20px; border: 1px solid #ccc; margin-top: 20px;">
+            <div style="text-align: center; margin-bottom: 15px;">
+                <h3>Авторизация</h3>
+            </div>
+            <div class="mb-5">
+                <RadzenFormField Text="Логин" Variant="Variant.Filled" Style="width: 100%;">
+                    <RadzenTextBox @bind-Value="model.UserName" Style="width: 100%;" />
+                </RadzenFormField>
+            </div>
+            <div class="mb-5">
+                <RadzenFormField Text="Пароль" Variant="Variant.Filled" Style="width: 100%;">
+                    <RadzenTextBox @bind-Value="model.Password" Style="width: 100%;" />
+                </RadzenFormField>
+            </div>
+            <div>
+                @if (_processing)
+                {
+                    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+                    <br />
+                    <div style="display: flex; justify-content: center;">
+                        <RadzenButton Disabled="@_processing" Click="Authenticate" Text="Войти" ButtonStyle="ButtonStyle.Primary" Style="width: 200px; padding: 10px;" />
+                    </div>
+                }
+                else
+                {
+                    <div style="display: flex; justify-content: center;">
+                        <RadzenButton Disabled="@_processing" Click="Authenticate" Text="Войти" ButtonStyle="ButtonStyle.Primary" Style="width: 200px; padding: 10px;" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</EditForm>
+@code {
+    private class Model
+    {
+        public string UserName { get; set; }
+        public string Password { get; set; }
+    }
+    private bool _processing = false;
+
+    async Task ProcessSomething()
+    {
+        _processing = true;
+        await Task.Delay(2000);
+        _processing = false;
+    }
+
+    private Model model = new Model();
+
+    private async Task Authenticate()
+    {
+        _processing = true;
+        await Task.Delay(2000);
+        _processing = false;
+
+        var userAccount = userAccountService.GetByUserName(model.UserName);
+        if (userAccount == null || userAccount.Password != model.Password)
+        {
+            await js.InvokeVoidAsync("alert", "Invalid User Name or Password");
+            return;
+        }
+
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(new UserSession
+            {
+                UserName = userAccount.UserName,
+                Role = userAccount.Role
+            });
+        Console.WriteLine("Button clicked");
+
+        navManager.NavigateTo("/", true);
+    }
+}

@@ -30,7 +30,9 @@
     [Parameter]
     public EBMegaServices selectedService { get; set; }
     private int Service_Order;
-    private string stringValueOfServiceOrder { get { return selectedService.Service_Order.ToString(); } set { Service_Order = int.Parse(value); } }
+    private string stringValueOfServiceOrder { get { return selectedService.Service_Order.ToString(); } set { Service_Order = int.Parse(value);
+            selectedService.Service_Order = int.Parse(value);
+        } }
 
     void OnSave()
     {
